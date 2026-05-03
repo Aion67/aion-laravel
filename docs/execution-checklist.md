@@ -33,9 +33,16 @@ Exit criteria:
 
 ## Phase 3 - Inventory Workflow
 
-- [ ] Inventory list with low-stock signals
-- [ ] Stock adjustments with reason capture
-- [ ] Stock movement logging from inventory operations
+- [x] Inventory list with low-stock signals
+- [x] Stock adjustments with reason capture
+- [x] Stock movement logging from inventory operations
+
+Exit criteria:
+- inventory list and low-stock filters are functional
+- manual stock adjustments create stock movement records
+- stock-out cannot reduce inventory below zero
+- stock movement listing and movement-type filter are functional
+- feature tests for Phase 3 workflows pass
 
 ## Phase 4 - Operational Workflow
 
