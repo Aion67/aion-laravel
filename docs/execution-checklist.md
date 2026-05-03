@@ -21,9 +21,15 @@ Exit criteria:
 
 ## Phase 2 - Master Data
 
-- [ ] Users management CRUD (admin only)
-- [ ] Customers CRUD with validation and search
-- [ ] Medications CRUD with SKU uniqueness and status management
+- [x] Users management CRUD (admin only)
+- [x] Customers CRUD with validation and search
+- [x] Medications CRUD with SKU uniqueness and status management
+
+Exit criteria:
+- user/customer/medication module CRUD routes are functional
+- validation failures are surfaced correctly in forms
+- search and status filters are functional on index pages
+- feature tests for Phase 2 modules pass
 
 ## Phase 3 - Inventory Workflow
 

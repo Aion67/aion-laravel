@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\StockMovementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,26 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/customers', function () {
-        return view('modules.index', [
-            'title' => 'Customers',
-            'description' => 'Manage patient details and customer records.',
-        ]);
-    })->name('customers.index');
-
-    Route::get('/medications', function () {
-        return view('modules.index', [
-            'title' => 'Medications',
-            'description' => 'Maintain the medication catalog and pricing basics.',
-        ]);
-    })->name('medications.index');
-
-    Route::get('/inventory', function () {
-        return view('modules.index', [
-            'title' => 'Inventory',
-            'description' => 'Track stock snapshots and adjustment readiness.',
-        ]);
-    })->name('inventory.index');
+    Route::middleware('role:admin,pharmacist')->group(function () {
+        Route::resource('customers', CustomerController::class)->except(['show']);
+        Route::resource('medications', MedicationController::class)->except(['show']);
+        Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::get('inventory/adjust', [InventoryController::class, 'createAdjustment'])->name('inventory.adjust.create');
+        Route::post('inventory/adjust', [InventoryController::class, 'storeAdjustment'])->name('inventory.adjust.store');
+        Route::get('stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+    });
 
     Route::get('/prescriptions', function () {
         return view('modules.index', [
@@ -58,21 +51,10 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('sales.index');
 
-    Route::get('/stock-movements', function () {
-        return view('modules.index', [
-            'title' => 'Stock Movements',
-            'description' => 'Review stock movement audit events.',
-        ]);
-    })->name('stock-movements.index');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/users', function () {
-        return view('modules.index', [
-            'title' => 'Users',
-            'description' => 'Admin-only staff and role management area.',
-        ]);
-    })->name('users.index');
+    Route::resource('users', UserController::class)->except(['show']);
 });
 
 require __DIR__.'/auth.php';

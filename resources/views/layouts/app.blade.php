@@ -31,6 +31,13 @@
 
             <!-- Page Content -->
             <main>
+                @if (session('status'))
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-6">
+                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+                            {{ session('status') }}
+                        </div>
+                    </div>
+                @endif
                 {{ $slot }}
             </main>
         </div>
