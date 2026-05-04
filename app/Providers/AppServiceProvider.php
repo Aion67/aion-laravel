@@ -21,10 +21,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('admin-only', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
-        Gate::define('pharmacy-staff', static fn (User $user): bool => in_array($user->role, [
+        Gate::define('access-pharmacy-operations', static fn (User $user): bool => in_array($user->role, [
             User::ROLE_ADMIN,
             User::ROLE_PHARMACIST,
         ], true));
+
+        Gate::define('adjust-inventory', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
+        Gate::define('view-stock-movements', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
+        Gate::define('manage-sales', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
+        Gate::define('view-reports', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
+        Gate::define('manage-users', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
     }
 }

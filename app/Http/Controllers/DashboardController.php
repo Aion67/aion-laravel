@@ -8,6 +8,7 @@ use App\Models\Medication;
 use App\Models\Prescription;
 use App\Models\Sale;
 use App\Models\StockMovement;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -15,21 +16,34 @@ class DashboardController extends Controller
     public function index(): View
     {
         $today = now()->toDateString();
+        $canManageSales = Gate::allows('manage-sales');
+        $canViewStockMovements = Gate::allows('view-stock-movements');
+        $canViewReports = Gate::allows('view-reports');
 
         $cards = [
             ['label' => 'Customers', 'value' => Customer::query()->count()],
             ['label' => 'Medications', 'value' => Medication::query()->count()],
-            ['label' => 'Low Stock Alerts', 'value' => $this->lowStockCount()],
-            ['label' => "Today's Sales", 'value' => number_format((float) Sale::query()->whereDate('sold_at', $today)->sum('total'), 2)],
             ['label' => "Today's Prescriptions", 'value' => Prescription::query()->whereDate('prescribed_at', $today)->count()],
         ];
 
+        if ($canManageSales) {
+            $cards[] = ['label' => 'Low Stock Alerts', 'value' => $this->lowStockCount()];
+            $cards[] = ['label' => "Today's Sales", 'value' => number_format((float) Sale::query()->whereDate('sold_at', $today)->sum('total'), 2)];
+        }
+
         return view('dashboard', [
             'cards' => $cards,
-            'lowStockItems' => $this->lowStockItems(),
-            'recentSales' => Sale::query()->with(['customer:id,first_name,last_name', 'user:id,name'])->orderByDesc('sold_at')->orderByDesc('id')->limit(5)->get(),
+            'canManageSales' => $canManageSales,
+            'canViewStockMovements' => $canViewStockMovements,
+            'canViewReports' => $canViewReports,
+            'lowStockItems' => $canManageSales ? $this->lowStockItems() : collect(),
+            'recentSales' => $canManageSales
+                ? Sale::query()->with(['customer:id,first_name,last_name', 'user:id,name'])->orderByDesc('sold_at')->orderByDesc('id')->limit(5)->get()
+                : collect(),
             'recentPrescriptions' => Prescription::query()->with(['customer:id,first_name,last_name', 'user:id,name'])->orderByDesc('prescribed_at')->orderByDesc('id')->limit(5)->get(),
-            'recentMovements' => StockMovement::query()->with(['medication:id,name,sku', 'user:id,name'])->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get(),
+            'recentMovements' => $canViewStockMovements
+                ? StockMovement::query()->with(['medication:id,name,sku', 'user:id,name'])->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get()
+                : collect(),
         ]);
     }
 

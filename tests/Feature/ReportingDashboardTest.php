@@ -19,13 +19,13 @@ class ReportingDashboardTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_dashboard_shows_live_operational_metrics(): void
+    public function test_admin_dashboard_shows_live_operational_metrics(): void
     {
         $now = Carbon::parse('2026-05-04 10:00:00');
         Carbon::setTestNow($now);
 
         try {
-            $staff = User::factory()->pharmacist()->create();
+            $staff = User::factory()->admin()->create();
             $customer = Customer::create([
                 'first_name' => 'Report',
                 'last_name' => 'Customer',
@@ -112,13 +112,13 @@ class ReportingDashboardTest extends TestCase
         }
     }
 
-    public function test_sales_and_stock_reports_are_accessible_and_populated(): void
+    public function test_admin_sales_and_stock_reports_are_accessible_and_populated(): void
     {
         $now = Carbon::parse('2026-05-04 10:00:00');
         Carbon::setTestNow($now);
 
         try {
-            $staff = User::factory()->pharmacist()->create();
+            $staff = User::factory()->admin()->create();
             $customer = Customer::create([
                 'first_name' => 'Report',
                 'last_name' => 'User',
@@ -182,5 +182,23 @@ class ReportingDashboardTest extends TestCase
         } finally {
             Carbon::setTestNow();
         }
+    }
+
+    public function test_pharmacist_dashboard_hides_admin_only_sections(): void
+    {
+        $staff = User::factory()->pharmacist()->create();
+
+        $response = $this->actingAs($staff)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Customers');
+        $response->assertSee('Medications');
+        $response->assertSee("Today's Prescriptions");
+        $response->assertDontSee('Low Stock Alerts');
+        $response->assertDontSee("Today's Sales");
+        $response->assertDontSee('Recent Sales');
+        $response->assertDontSee('Recent Stock Movements');
+        $response->assertDontSee('Sales Report');
+        $response->assertDontSee('Stock Report');
     }
 }

@@ -14,9 +14,9 @@ class SaleWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_staff_can_complete_sale_and_inventory_is_deducted(): void
+    public function test_admin_can_complete_sale_and_inventory_is_deducted(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $customer = Customer::create([
             'first_name' => 'Buyer',
             'last_name' => 'One',
@@ -69,9 +69,9 @@ class SaleWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_sale_cannot_exceed_available_stock(): void
+    public function test_admin_sale_cannot_exceed_available_stock(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $medication = Medication::create([
             'sku' => 'SALE-002',
             'name' => 'Limited Sale Med',
@@ -104,9 +104,9 @@ class SaleWorkflowTest extends TestCase
         $response->assertSessionHasErrors('items');
     }
 
-    public function test_staff_can_view_sales_index_and_receipt(): void
+    public function test_admin_can_view_sales_index_and_receipt(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $sale = Sale::create([
             'customer_id' => null,
             'user_id' => $staff->id,

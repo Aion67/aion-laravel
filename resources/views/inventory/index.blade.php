@@ -24,11 +24,13 @@
                 </form>
             </div>
 
-            <div class="flex justify-end">
-                <a href="{{ route('inventory.adjust.create') }}">
-                    <x-primary-button type="button">Adjust Stock</x-primary-button>
-                </a>
-            </div>
+            @can('adjust-inventory')
+                <div class="flex justify-end">
+                    <a href="{{ route('inventory.adjust.create') }}">
+                        <x-primary-button type="button">Adjust Stock</x-primary-button>
+                    </a>
+                </div>
+            @endcan
 
             <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -57,9 +59,11 @@
                                     <span class="ml-2 text-gray-600">{{ $row['is_low_stock'] ? 'Low stock' : 'Healthy' }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-sm">
-                                    <div class="flex justify-end">
-                                        <a href="{{ route('inventory.adjust.create', ['medication_id' => $row['medication']->id]) }}" class="text-indigo-600 hover:text-indigo-800">Adjust</a>
-                                    </div>
+                                    @can('adjust-inventory')
+                                        <div class="flex justify-end">
+                                            <a href="{{ route('inventory.adjust.create', ['medication_id' => $row['medication']->id]) }}" class="text-indigo-600 hover:text-indigo-800">Adjust</a>
+                                        </div>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty

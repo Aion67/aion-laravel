@@ -11,9 +11,9 @@ class InventoryWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_staff_can_adjust_inventory_and_log_stock_movement(): void
+    public function test_admin_can_adjust_inventory_and_log_stock_movement(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $medication = Medication::create([
             'sku' => 'INV-001',
             'name' => 'Inventory Med',
@@ -60,9 +60,9 @@ class InventoryWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_stock_out_cannot_exceed_stock_on_hand(): void
+    public function test_admin_stock_out_cannot_exceed_stock_on_hand(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $medication = Medication::create([
             'sku' => 'INV-002',
             'name' => 'Limited Med',
@@ -91,9 +91,9 @@ class InventoryWorkflowTest extends TestCase
         $response->assertSessionHasErrors('quantity');
     }
 
-    public function test_staff_can_filter_stock_movements(): void
+    public function test_admin_can_filter_stock_movements(): void
     {
-        $staff = User::factory()->pharmacist()->create();
+        $staff = User::factory()->admin()->create();
         $medication = Medication::create([
             'sku' => 'INV-003',
             'name' => 'Filter Med',

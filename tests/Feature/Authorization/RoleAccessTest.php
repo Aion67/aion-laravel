@@ -35,5 +35,17 @@ class RoleAccessTest extends TestCase
         $this->actingAs($pharmacist)->get(route('customers.index'))->assertOk();
         $this->actingAs($pharmacist)->get(route('medications.index'))->assertOk();
         $this->actingAs($pharmacist)->get(route('inventory.index'))->assertOk();
+        $this->actingAs($pharmacist)->get(route('prescriptions.index'))->assertOk();
+    }
+
+    public function test_pharmacist_cannot_access_admin_only_modules(): void
+    {
+        $pharmacist = User::factory()->pharmacist()->create();
+
+        $this->actingAs($pharmacist)->get(route('inventory.adjust.create'))->assertForbidden();
+        $this->actingAs($pharmacist)->get(route('stock-movements.index'))->assertForbidden();
+        $this->actingAs($pharmacist)->get(route('sales.index'))->assertForbidden();
+        $this->actingAs($pharmacist)->get(route('reports.sales'))->assertForbidden();
+        $this->actingAs($pharmacist)->get(route('reports.stock'))->assertForbidden();
     }
 }
