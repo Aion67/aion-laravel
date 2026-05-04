@@ -6,11 +6,13 @@
         />
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="py-8 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 @foreach ($cards as $card)
-                    <x-stat-card :label="$card['label']" :value="$card['value']" />
+                    <div class="min-w-0">
+                        <x-stat-card :label="$card['label']" :value="$card['value']" />
+                    </div>
                 @endforeach
             </div>
 
@@ -172,7 +174,7 @@
                         </p>
                     </div>
                     @if ($canViewReports)
-                        <div class="flex gap-3">
+                        <div class="hidden sm:flex gap-3">
                             <a href="{{ route('reports.sales') }}">
                                 <x-secondary-button type="button">Sales Report</x-secondary-button>
                             </a>

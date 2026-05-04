@@ -3,17 +3,22 @@
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
     </div>
 
-    <form method="POST" action="{{ route('password.confirm') }}">
+    <form method="POST" action="{{ route('password.confirm') }}" x-data="{ showPassword: false }">
         @csrf
 
         <!-- Password -->
         <div>
             <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <div class="relative">
+                <x-text-input id="password" class="block mt-1 w-full pe-10"
+                    x-bind:type="showPassword ? 'text' : 'password'"
+                    name="password"
+                    required autocomplete="current-password" />
+                <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 mt-1 flex items-center px-3 text-gray-500 hover:text-gray-700" aria-label="Toggle password visibility">
+                    <x-icon name="eye" class="h-5 w-5" x-show="!showPassword" />
+                    <x-icon name="eye-off" class="h-5 w-5" x-show="showPassword" x-cloak />
+                </button>
+            </div>
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
