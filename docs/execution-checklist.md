@@ -46,9 +46,9 @@ Exit criteria:
 
 ## Phase 4 - Operational Workflow
 
-- [ ] Prescriptions creation and status transitions
-- [ ] Sales checkout flow and receipt output
-- [ ] Inventory deduction integration on completed sales
+- [x] Prescriptions creation and status transitions
+- [x] Sales checkout flow and receipt output
+- [x] Inventory deduction integration on completed sales
 
 ## Phase 5 - Reporting and Summaries
 

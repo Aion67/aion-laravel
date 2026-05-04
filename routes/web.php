@@ -6,6 +6,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,22 +37,10 @@ Route::middleware('auth')->group(function () {
         Route::get('inventory/adjust', [InventoryController::class, 'createAdjustment'])->name('inventory.adjust.create');
         Route::post('inventory/adjust', [InventoryController::class, 'storeAdjustment'])->name('inventory.adjust.store');
         Route::get('stock-movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+        Route::resource('prescriptions', PrescriptionController::class)->only(['index', 'create', 'store', 'show']);
+        Route::patch('prescriptions/{prescription}/status', [PrescriptionController::class, 'updateStatus'])->name('prescriptions.status.update');
+        Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
     });
-
-    Route::get('/prescriptions', function () {
-        return view('modules.index', [
-            'title' => 'Prescriptions',
-            'description' => 'Prepare and review prescription records workflow.',
-        ]);
-    })->name('prescriptions.index');
-
-    Route::get('/sales', function () {
-        return view('modules.index', [
-            'title' => 'Sales',
-            'description' => 'Manage point-of-sale transaction flow.',
-        ]);
-    })->name('sales.index');
-
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
