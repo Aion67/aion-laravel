@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MedicationController;
@@ -14,16 +16,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard', [
-        'cards' => [
-            ['label' => 'Customers', 'value' => '0'],
-            ['label' => 'Medications', 'value' => '0'],
-            ['label' => 'Low Stock', 'value' => '0'],
-            ['label' => "Today's Sales", 'value' => '0.00'],
-        ],
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,6 +35,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('prescriptions', PrescriptionController::class)->only(['index', 'create', 'store', 'show']);
         Route::patch('prescriptions/{prescription}/status', [PrescriptionController::class, 'updateStatus'])->name('prescriptions.status.update');
         Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+        Route::get('reports/stock', [ReportController::class, 'stock'])->name('reports.stock');
     });
 });
 

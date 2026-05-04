@@ -52,6 +52,6 @@ Exit criteria:
 
 ## Phase 5 - Reporting and Summaries
 
-- [ ] Dashboard cards backed by live aggregates
-- [ ] Recent activity panels (sales, prescriptions, stock movements)
-- [ ] Sales and stock summary reporting views
+- [x] Dashboard cards backed by live aggregates
+- [x] Recent activity panels (sales, prescriptions, stock movements)
+- [x] Sales and stock summary reporting views
