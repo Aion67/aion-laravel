@@ -1,11 +1,9 @@
 name: Deploy
-
 on:
   workflow_run:
     workflows: ["CI"]
     types: [completed]
     branches: ["main"]
-
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -17,27 +15,22 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          envs: DEPLOY_PATH
           script_stop: true
           script: |
             set -euo pipefail
-            cd "${{ secrets.DEPLOY_PATH }}"
-
-            # Ensure latest code is on the deployed branch.
+            cd "$DEPLOY_PATH"
             git fetch origin
             git checkout main
             git reset --hard origin/main
-
-            # Build and roll out containers.
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml pull || true
             docker compose -f docker-compose.prod.yml up -d --build
-
-            # Database migrations and cache warm-up.
             docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
             docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
             docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache
             docker compose -f docker-compose.prod.yml exec -T app php artisan view:cache
-
-            # Quick health snapshot.
             docker compose -f docker-compose.prod.yml ps
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
