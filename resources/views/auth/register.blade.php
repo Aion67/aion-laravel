@@ -16,16 +16,6 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Role (temporary: allow creating admin) -->
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Role')" />
-            <select id="role" name="role" class="block mt-1 w-full rounded-md border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                <option value="{{ App\\Models\\User::ROLE_PHARMACIST }}" {{ old('role', App\\Models\\User::ROLE_PHARMACIST) === App\\Models\\User::ROLE_PHARMACIST ? 'selected' : '' }}>Pharmacist</option>
-                <option value="{{ App\\Models\\User::ROLE_ADMIN }}" {{ old('role') === App\\Models\\User::ROLE_ADMIN ? 'selected' : '' }}>Admin</option>
-            </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
-
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />

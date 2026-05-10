@@ -18,8 +18,13 @@
             <div class="absolute inset-x-0 top-0 -z-10 h-72 bg-[linear-gradient(to_right,_rgba(14,165,123,0.08),_rgba(255,167,0,0.08))] blur-3xl"></div>
 
             <header class="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
-                <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                    <x-application-logo class="h-11 w-auto" />
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
+                    <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-soft-md">
+                        <span class="text-lg font-black tracking-tight">A</span>
+                    </span>
+                    <span>
+                        <span class="block text-sm font-semibold uppercase tracking-[0.28em] text-primary-700">Aion</span>
+                    </span>
                 </a>
 
                 <nav class="flex items-center gap-3">

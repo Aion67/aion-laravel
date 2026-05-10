@@ -21,8 +21,9 @@
             <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 items-center justify-between">
-                        <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                            <x-application-logo class="h-10 w-auto" />
+                        <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white font-bold">A</span>
+                            <span class="text-sm font-semibold tracking-wide text-slate-800">{{ config('app.name', 'Aion') }}</span>
                         </a>
 
                         <nav class="flex items-center gap-4 text-sm font-medium">
