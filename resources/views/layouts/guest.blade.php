@@ -22,7 +22,7 @@
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 items-center justify-between">
                         <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                            <x-application-logo class="h-10 w-auto" />
+                            <x-application-logo class="h-12 w-auto" />
                         </a>
 
                         <nav class="flex items-center gap-4 text-sm font-medium">
@@ -39,7 +39,7 @@
             <div class="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:py-10">
                 <div>
                     <a href="{{ url('/') }}">
-                        <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                        <x-application-logo class="w-24 h-24 fill-current text-gray-500" />
                     </a>
                 </div>
 

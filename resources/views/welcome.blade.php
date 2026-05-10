@@ -13,13 +13,10 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-        <div class="relative overflow-hidden">
-            <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,123,0.16),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,167,0,0.16),_transparent_28%),linear-gradient(to_bottom,_#f8fffd,_#f8fafc_35%,_#f8fafc)]"></div>
-            <div class="absolute inset-x-0 top-0 -z-10 h-72 bg-[linear-gradient(to_right,_rgba(14,165,123,0.08),_rgba(255,167,0,0.08))] blur-3xl"></div>
-
+        <div class="flex min-h-screen flex-col">
             <header class="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
                 <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                    <x-application-logo class="h-11 w-auto" />
+                    <x-application-logo class="h-14 w-auto" />
                 </a>
 
                 <nav class="flex items-center gap-3">
@@ -36,17 +33,21 @@
                 </nav>
             </header>
 
-            <main class="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
-                <div>
-                    <h1 class="max-w-3xl text-5xl font-extrabold leading-[0.95] tracking-tight text-balance text-slate-950 sm:text-6xl lg:text-7xl">
+            <main class="flex flex-1 items-center justify-center px-6 py-12 text-center lg:px-8">
+                <div class="mx-auto max-w-4xl">
+                    <div class="flex justify-center">
+                        <x-application-logo class="h-24 w-auto" />
+                    </div>
+
+                    <h1 class="mt-10 text-5xl font-extrabold leading-[0.95] tracking-tight text-balance text-slate-950 sm:text-6xl lg:text-7xl">
                         Pharmacy management
-                        <span class="bg-gradient-to-r from-primary-700 via-primary-600 to-accent-600 bg-clip-text text-transparent">simplified.</span>
+                        <span class="text-primary-700">simplified.</span>
                     </h1>
-                    <p class="mt-6 max-w-xl text-lg leading-8 text-slate-600 sm:text-xl">
+                    <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-600 sm:text-xl">
                         Manage prescriptions, sales, stock movement, and reports in one workflow built for the realities of a busy pharmacy counter.
                     </p>
 
-                    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                         @auth
                             <a href="{{ url('/dashboard') }}" class="btn-primary justify-center px-6 py-3 text-base">Open dashboard</a>
                         @else
@@ -54,7 +55,7 @@
                             <a href="{{ route('login') }}" class="btn-secondary justify-center px-6 py-3 text-base">Log in</a>
                         @endauth
                     </div>
-                    </div>
+                </div>
             </main>
 
             <footer class="mx-auto max-w-7xl px-6 pb-10 text-sm text-slate-500 lg:px-8">
