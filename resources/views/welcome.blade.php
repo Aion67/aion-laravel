@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Aion') }} | Pharmacy management simplified</title>
+        <title>{{ config('app.name', 'Aion') }}</title>
         <meta name="description" content="Aion helps pharmacies track prescriptions, sales, inventory, and reporting in one clean workflow.">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
