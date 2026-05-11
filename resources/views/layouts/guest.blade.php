@@ -21,9 +21,6 @@
             <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex min-h-20 items-center justify-between py-2 sm:min-h-[4.5rem] sm:py-0">
-                        <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                            <x-application-logo class="h-20 w-auto sm:h-[4.5rem]" />
-                        </a>
 
                         <nav class="flex items-center gap-4 text-sm font-medium">
                             <a href="{{ url('/') }}" class="text-slate-600 hover:text-slate-900">Home</a>
