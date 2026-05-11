@@ -184,7 +184,7 @@ class ReportingDashboardTest extends TestCase
         }
     }
 
-    public function test_pharmacist_dashboard_hides_admin_only_sections(): void
+    public function test_pharmacist_dashboard_shows_sales_widgets_but_hides_admin_only_sections(): void
     {
         $staff = User::factory()->pharmacist()->create();
 
@@ -194,9 +194,9 @@ class ReportingDashboardTest extends TestCase
         $response->assertSee('Customers');
         $response->assertSee('Medications');
         $response->assertSee("Today's Prescriptions");
-        $response->assertDontSee('Low Stock Alerts');
-        $response->assertDontSee("Today's Sales");
-        $response->assertDontSee('Recent Sales');
+        $response->assertSee('Low Stock Alerts');
+        $response->assertSee("Today's Sales");
+        $response->assertSee('Recent Sales');
         $response->assertDontSee('Recent Stock Movements');
         $response->assertDontSee('Sales Report');
         $response->assertDontSee('Stock Report');

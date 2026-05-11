@@ -1,10 +1,11 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between items-center min-h-20 py-2 sm:min-h-[4.5rem] sm:py-0">
             <div class="flex items-center gap-6">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-12 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block h-20
+                         w-auto sm:h-[4.5rem] fill-current text-gray-800" />
                     </a>
                 </div>
 
@@ -24,20 +25,26 @@
                     <x-nav-link :href="route('prescriptions.index')" :active="request()->routeIs('prescriptions.*')">
                         {{ __('Prescriptions') }}
                     </x-nav-link>
-                    @if (Auth::user()->isAdmin())
+                    @can('manage-sales')
                         <x-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
                             {{ __('Sales') }}
                         </x-nav-link>
+                    @endcan
+                    @can('view-reports')
                         <x-nav-link :href="route('reports.sales')" :active="request()->routeIs('reports.*')">
                             {{ __('Reports') }}
                         </x-nav-link>
+                    @endcan
+                    @can('view-stock-movements')
                         <x-nav-link :href="route('stock-movements.index')" :active="request()->routeIs('stock-movements.*')">
                             {{ __('Stock') }}
                         </x-nav-link>
+                    @endcan
+                    @can('manage-users')
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                             {{ __('Users') }}
                         </x-nav-link>
-                    @endif
+                    @endcan
                 </div>
             </div>
 
@@ -113,14 +120,22 @@
                 </div>
             </div>
 
+            @can('manage-sales')
+                <div>
+                    <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Sales</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="{{ route('sales.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium col-span-2 {{ request()->routeIs('sales.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Sales</a>
+                    </div>
+                </div>
+            @endcan
+
             @if (Auth::user()->isAdmin())
                 <div>
                     <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Admin</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <a href="{{ route('sales.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('sales.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Sales</a>
                         <a href="{{ route('reports.sales') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Reports</a>
                         <a href="{{ route('stock-movements.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('stock-movements.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Stock</a>
-                        <a href="{{ route('users.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('users.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Users</a>
+                        <a href="{{ route('users.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium col-span-2 {{ request()->routeIs('users.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Users</a>
                     </div>
                 </div>
             @endif

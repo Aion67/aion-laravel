@@ -16,7 +16,7 @@
         <div class="flex min-h-screen flex-col">
             <header class="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 lg:px-8">
                 <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                    <x-application-logo class="h-14 w-auto" />
+                    <x-application-logo class="h-20 w-auto sm:h-24" />
                 </a>
 
                 <nav class="flex items-center gap-3">
@@ -35,11 +35,7 @@
 
             <main class="flex flex-1 items-center justify-center px-6 py-12 text-center lg:px-8">
                 <div class="mx-auto max-w-4xl">
-                    <div class="flex justify-center">
-                        <x-application-logo class="h-24 w-auto" />
-                    </div>
-
-                    <h1 class="mt-10 text-5xl font-extrabold leading-[0.95] tracking-tight text-balance text-slate-950 sm:text-6xl lg:text-7xl">
+                    <h1 class="text-5xl font-extrabold leading-[0.95] tracking-tight text-balance text-slate-950 sm:text-6xl lg:text-7xl">
                         Pharmacy management
                         <span class="text-primary-700">simplified.</span>
                     </h1>

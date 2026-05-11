@@ -34,11 +34,6 @@ jobs:
           php artisan key:generate
           touch database/database.sqlite
 
-      - name: Configure SQLite for CI
-        run: |
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=database/database.sqlite" >> .env
-
       - name: Run migrations
         run: php artisan migrate --force
 

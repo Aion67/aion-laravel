@@ -28,7 +28,10 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('adjust-inventory', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
         Gate::define('view-stock-movements', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
-        Gate::define('manage-sales', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
+        Gate::define('manage-sales', static fn (User $user): bool => in_array($user->role, [
+            User::ROLE_ADMIN,
+            User::ROLE_PHARMACIST,
+        ], true));
         Gate::define('view-reports', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
         Gate::define('manage-users', static fn (User $user): bool => $user->role === User::ROLE_ADMIN);
     }
