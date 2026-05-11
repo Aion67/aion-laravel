@@ -21,7 +21,9 @@
             <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex min-h-20 items-center justify-between py-2 sm:min-h-[4.5rem] sm:py-0">
-
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
+                            <x-application-logo class="h-16 w-auto sm:h-[4.5rem]" />
+                        </a>
                         <nav class="flex items-center gap-4 text-sm font-medium">
                             <a href="{{ url('/') }}" class="text-slate-600 hover:text-slate-900">Home</a>
                             <a href="{{ route('login') }}" class="text-slate-600 hover:text-slate-900">Log in</a>
@@ -34,13 +36,6 @@
             </header>
 
             <div class="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:py-10">
-                {{-- Brand mark above login / register / forgot-password forms (see also header logo) --}}
-                <div class="mb-2 flex justify-center">
-                    <a href="{{ url('/') }}" class="inline-flex rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                        <x-application-logo class="h-36 w-auto sm:h-44" />
-                    </a>
-                </div>
-
                 <div class="w-full sm:max-w-md mt-4 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
                     {{ $slot }}
                 </div>
