@@ -44,14 +44,14 @@
             </div>
 
             @if ($viewMode === 'cards')
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                     @forelse ($medications as $medication)
                         <article class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
                             <x-medication-image :medication="$medication" variant="card" />
-                            <div class="space-y-2.5 p-3.5">
+                            <div class="space-y-2 p-3">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <h3 class="text-base font-semibold text-gray-900">{{ $medication->name }}</h3>
+                                        <h3 class="text-sm font-semibold text-gray-900">{{ $medication->name }}</h3>
                                         <p class="text-xs text-gray-500">{{ $medication->sku }}</p>
                                     </div>
                                     <x-status-badge :status="$medication->status" />
@@ -59,18 +59,18 @@
 
                                 <p class="text-xs text-gray-600">{{ $medication->strength ?: 'No strength' }} • {{ $medication->unit_type }}</p>
 
-                                <div class="grid grid-cols-2 gap-2.5 text-sm">
-                                    <div class="rounded-lg bg-gray-50 p-2.5">
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="rounded-lg bg-gray-50 p-2">
                                         <p class="text-xs uppercase tracking-wide text-gray-500">Unit Price</p>
-                                        <p class="mt-1 font-semibold text-gray-900"><x-money :amount="$medication->unit_price" /></p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900"><x-money :amount="$medication->unit_price" /></p>
                                     </div>
-                                    <div class="rounded-lg bg-gray-50 p-2.5">
+                                    <div class="rounded-lg bg-gray-50 p-2">
                                         <p class="text-xs uppercase tracking-wide text-gray-500">Stock</p>
-                                        <p class="mt-1 font-semibold text-gray-900">{{ $medication->inventory?->quantity_on_hand ?? 0 }}</p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $medication->inventory?->quantity_on_hand ?? 0 }}</p>
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between gap-2 pt-1.5">
+                                <div class="flex items-center justify-between gap-2 pt-1">
                                     <div class="flex gap-2 text-xs">
                                         <a href="{{ route('medications.show', $medication) }}" class="text-gray-700 hover:text-gray-900">View</a>
                                         <a href="{{ route('medications.edit', $medication) }}" class="text-indigo-600 hover:text-indigo-800">Edit</a>

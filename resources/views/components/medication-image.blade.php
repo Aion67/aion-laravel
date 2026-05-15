@@ -7,9 +7,9 @@
 @php
     $variantClasses = match ($variant) {
         'thumbnail' => 'h-16 w-16 rounded-lg',
-        'preview' => 'h-36 w-full rounded-lg',
+        'preview' => 'h-32 w-full rounded-lg',
         'detail' => 'aspect-[16/9] w-full rounded-2xl md:aspect-auto md:h-full',
-        default => 'aspect-[5/4] w-full rounded-xl',
+        default => 'h-28 w-full rounded-xl',
     };
 
     $imageClasses = match ($variant) {

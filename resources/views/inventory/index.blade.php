@@ -40,14 +40,14 @@
             @endcan
 
             @if ($viewMode === 'cards')
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                     @forelse ($inventoryRows as $row)
                         <article class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
                             <x-medication-image :medication="$row['medication']" variant="card" />
-                            <div class="space-y-2.5 p-3.5">
+                            <div class="space-y-2 p-3">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <h3 class="text-base font-semibold text-gray-900">{{ $row['medication']->name }}</h3>
+                                        <h3 class="text-sm font-semibold text-gray-900">{{ $row['medication']->name }}</h3>
                                         <p class="text-xs text-gray-500">{{ $row['medication']->sku }}</p>
                                     </div>
                                     <x-status-badge :status="$row['is_low_stock'] ? 'pending' : 'active'" />
@@ -55,20 +55,20 @@
 
                                 <p class="text-xs text-gray-600">{{ $row['medication']->strength ?: 'No strength' }} • {{ $row['medication']->unit_type }}</p>
 
-                                <div class="grid grid-cols-2 gap-2.5 text-sm">
-                                    <div class="rounded-lg bg-gray-50 p-2.5">
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="rounded-lg bg-gray-50 p-2">
                                         <p class="text-xs uppercase tracking-wide text-gray-500">On Hand</p>
-                                        <p class="mt-1 font-semibold text-gray-900">{{ $row['quantity_on_hand'] }}</p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $row['quantity_on_hand'] }}</p>
                                     </div>
-                                    <div class="rounded-lg bg-gray-50 p-2.5">
+                                    <div class="rounded-lg bg-gray-50 p-2">
                                         <p class="text-xs uppercase tracking-wide text-gray-500">Reserved</p>
-                                        <p class="mt-1 font-semibold text-gray-900">{{ $row['reserved_quantity'] }}</p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ $row['reserved_quantity'] }}</p>
                                     </div>
                                 </div>
 
-                                <div class="rounded-lg bg-gray-50 p-2.5 text-sm">
+                                <div class="rounded-lg bg-gray-50 p-2 text-sm">
                                     <p class="text-xs uppercase tracking-wide text-gray-500">Reorder Level</p>
-                                    <p class="mt-1 font-semibold text-gray-900">{{ $row['medication']->reorder_level ?? '-' }}</p>
+                                    <p class="mt-1 text-sm font-semibold text-gray-900">{{ $row['medication']->reorder_level ?? '-' }}</p>
                                 </div>
 
                                 <div class="flex justify-end pt-1">
