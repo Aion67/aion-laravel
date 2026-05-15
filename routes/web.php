@@ -48,7 +48,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:view-reports')->group(function () {
         Route::get('reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+        Route::get('reports/sales/export', [ReportController::class, 'exportSales'])->name('reports.sales.export');
         Route::get('reports/stock', [ReportController::class, 'stock'])->name('reports.stock');
+        Route::get('reports/stock/export', [ReportController::class, 'exportStock'])->name('reports.stock.export');
     });
 
     Route::middleware('can:manage-users')->group(function () {
