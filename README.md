@@ -137,6 +137,12 @@ If you use **`npm run dev`**, set `APP_URL` in `.env` to the same base URL Larav
   - `./vendor/bin/sail artisan migrate`
   - `./vendor/bin/sail npm run dev`
 
+## Local Docker Compose
+
+- Use `compose.yaml` if you want the app, MySQL, and Redis running in Docker locally.
+- Start it with `docker compose -f compose.yaml up -d --build`.
+- After the containers are up, run migrations and seed data inside the app container.
+
 ## Production-style Docker
 
 - Copy `.env.production.example` to `.env` and set strong secrets.
