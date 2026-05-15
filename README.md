@@ -149,6 +149,8 @@ If you use **`npm run dev`**, set `APP_URL` in `.env` to the same base URL Larav
 - Build and run with:
   - `docker compose -f docker-compose.prod.yml build`
   - `docker compose -f docker-compose.prod.yml up -d`
+- The production stack now keeps `storage/` on a named volume so uploaded medication images persist across rebuilds.
+- If you are setting the app up on a fresh server, run `php artisan storage:link` once so the public disk is reachable at `/storage`.
 - Generate APP_KEY once and paste it into `.env`:
   - `docker compose -f docker-compose.prod.yml exec app php artisan key:generate --show`
 - Run one-time setup after first start:

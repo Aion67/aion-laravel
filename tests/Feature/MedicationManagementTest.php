@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Medication;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class MedicationManagementTest extends TestCase
@@ -14,6 +16,7 @@ class MedicationManagementTest extends TestCase
     public function test_staff_can_create_update_and_delete_medication(): void
     {
         $staff = User::factory()->pharmacist()->create();
+        Storage::fake('public');
 
         $this->actingAs($staff)
             ->post(route('medications.store'), [
@@ -25,10 +28,13 @@ class MedicationManagementTest extends TestCase
                 'unit_price' => 12.5,
                 'reorder_level' => 10,
                 'status' => 'active',
+                'image' => UploadedFile::fake()->create('amoxicillin.jpg', 200, 'image/jpeg'),
             ])
             ->assertRedirect(route('medications.index'));
 
         $medication = Medication::where('sku', 'SKU-001')->firstOrFail();
+        $this->assertNotNull($medication->image_path);
+        Storage::disk('public')->assertExists($medication->image_path);
 
         $this->actingAs($staff)
             ->put(route('medications.update', $medication), [
@@ -45,15 +51,23 @@ class MedicationManagementTest extends TestCase
 
         $this->assertDatabaseHas('medications', [
             'id' => $medication->id,
+            'image_path' => $medication->image_path,
+        ]);
+
+        $this->assertDatabaseHas('medications', [
+            'id' => $medication->id,
             'name' => 'Amoxicillin Plus',
             'status' => 'inactive',
         ]);
+
+        Storage::disk('public')->assertExists($medication->image_path);
 
         $this->actingAs($staff)
             ->delete(route('medications.destroy', $medication))
             ->assertRedirect(route('medications.index'));
 
         $this->assertDatabaseMissing('medications', ['id' => $medication->id]);
+        Storage::disk('public')->assertMissing($medication->image_path);
     }
 
     public function test_staff_can_filter_medications(): void

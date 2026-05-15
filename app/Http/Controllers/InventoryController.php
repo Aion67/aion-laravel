@@ -18,6 +18,9 @@ class InventoryController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $onlyLowStock = $request->boolean('low_stock');
+        $viewMode = in_array((string) $request->query('view', 'table'), ['table', 'cards'], true)
+            ? (string) $request->query('view', 'table')
+            : 'table';
 
         $medications = Medication::query()
             ->with('inventory')
@@ -48,6 +51,25 @@ class InventoryController extends Controller
             'inventoryRows' => $medications,
             'search' => $search,
             'onlyLowStock' => $onlyLowStock,
+            'viewMode' => $viewMode,
+        ]);
+    }
+
+    public function show(Medication $medication): View
+    {
+        $medication->load([
+            'inventory',
+            'stockMovements' => fn ($query) => $query->with('user:id,name')->orderByDesc('created_at')->limit(12),
+        ]);
+
+        $quantityOnHand = (int) ($medication->inventory?->quantity_on_hand ?? 0);
+        $reorderLevel = $medication->reorder_level;
+
+        return view('inventory.show', [
+            'medication' => $medication,
+            'quantityOnHand' => $quantityOnHand,
+            'reservedQuantity' => (int) ($medication->inventory?->reserved_quantity ?? 0),
+            'isLowStock' => $reorderLevel !== null && $quantityOnHand <= $reorderLevel,
         ]);
     }
 
