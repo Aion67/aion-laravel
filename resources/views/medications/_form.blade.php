@@ -4,7 +4,7 @@
     'medication' => null,
 ])
 
-<form method="POST" action="{{ $action }}" class="space-y-6">
+<form method="POST" action="{{ $action }}" class="space-y-6" enctype="multipart/form-data">
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -60,6 +60,25 @@
                 <option value="inactive" @selected($selectedStatus === 'inactive')>Inactive</option>
             </select>
             <x-input-error :messages="$errors->get('status')" class="mt-2" />
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+        <div class="md:col-span-2">
+            <x-input-label for="image" value="Medication Image" />
+            <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-indigo-700 hover:file:bg-indigo-100" />
+            <p class="mt-2 text-xs text-gray-500">PNG, JPG, WebP up to 2MB. Leave empty to use the existing image or fallback placeholder.</p>
+            <x-input-error :messages="$errors->get('image')" class="mt-2" />
+        </div>
+
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Preview</p>
+            <x-medication-image
+                :medication="$medication ?? new \App\Models\Medication()"
+                variant="preview"
+                alt="Medication preview"
+                class="mt-3 border border-gray-200 bg-white"
+            />
         </div>
     </div>
 

@@ -14,6 +14,8 @@ services:
       REDIS_HOST: redis
     ports:
       - "${APP_PORT:-8080}:80"
+    volumes:
+      - app-storage:/var/www/html/storage
     depends_on:
       mysql:
         condition: service_healthy
@@ -31,6 +33,8 @@ services:
       DB_HOST: mysql
       REDIS_HOST: redis
     command: php artisan queue:work --tries=3 --sleep=3 --timeout=90 --max-time=3600
+    volumes:
+      - app-storage:/var/www/html/storage
     depends_on:
       mysql:
         condition: service_healthy
@@ -48,6 +52,8 @@ services:
       DB_HOST: mysql
       REDIS_HOST: redis
     command: /bin/sh -lc "while true; do php artisan schedule:run --no-interaction --verbose; sleep 60; done"
+    volumes:
+      - app-storage:/var/www/html/storage
     depends_on:
       mysql:
         condition: service_healthy
@@ -88,3 +94,4 @@ services:
 volumes:
   mysql-data:
   redis-data:
+  app-storage:

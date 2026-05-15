@@ -24,6 +24,7 @@ class StoreMedicationRequest extends FormRequest
             'unit_price' => ['required', 'numeric', 'min:0'],
             'reorder_level' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
+            'image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

@@ -27,8 +27,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('can:access-pharmacy-operations')->group(function () {
         Route::resource('customers', CustomerController::class)->except(['show']);
-        Route::resource('medications', MedicationController::class)->except(['show']);
+        Route::resource('medications', MedicationController::class);
         Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+        Route::get('inventory/{medication}', [InventoryController::class, 'show'])
+            ->whereNumber('medication')
+            ->name('inventory.show');
         Route::resource('prescriptions', PrescriptionController::class)->only(['index', 'create', 'store', 'show']);
         Route::patch('prescriptions/{prescription}/status', [PrescriptionController::class, 'updateStatus'])->name('prescriptions.status.update');
     });

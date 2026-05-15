@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
+  <title id="title">Medication placeholder</title>
+  <desc id="desc">A simple illustrated pill bottle placeholder.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="bottle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="220" rx="24" fill="url(#bg)"/>
+  <rect x="96" y="38" width="128" height="148" rx="20" fill="#ffffff" opacity="0.85"/>
+  <rect x="116" y="24" width="88" height="28" rx="10" fill="#93c5fd"/>
+  <rect x="122" y="60" width="76" height="108" rx="16" fill="url(#bottle)"/>
+  <rect x="135" y="84" width="50" height="10" rx="5" fill="#bfdbfe"/>
+  <rect x="135" y="104" width="50" height="10" rx="5" fill="#bfdbfe"/>
+  <rect x="135" y="124" width="50" height="10" rx="5" fill="#bfdbfe"/>
+  <circle cx="60" cy="158" r="18" fill="#fde68a"/>
+  <circle cx="260" cy="86" r="16" fill="#bbf7d0"/>
+  <circle cx="248" cy="160" r="10" fill="#fecaca"/>
+  <path d="M40 188c36-18 68-18 104 0s68 18 136 0" fill="none" stroke="#60a5fa" stroke-width="8" stroke-linecap="round" opacity="0.35"/>
+</svg>
