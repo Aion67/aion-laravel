@@ -155,7 +155,7 @@ class DatabaseSeeder extends Seeder
                     'sex' => $profile['sex'],
                     'phone' => '+256'.str_pad((string) random_int(700000000, 799999999), 9, '0', STR_PAD_LEFT),
                     'email' => $email,
-                    'address' => fake()->streetAddress().', '.fake()->city(),
+                    'address' => $this->faker()->streetAddress().', '.$this->faker()->city(),
                     'medical_history' => collect($medicalNotes)->random(random_int(1, 2))->implode(', '),
                     'allergies' => collect($allergyNotes)->random(random_int(1, 2))->implode(', '),
                     'conditions' => collect($medicalNotes)->random(random_int(1, 2))->implode(', '),
@@ -202,7 +202,7 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $team->random()->id,
                     'prescription_number' => sprintf('RX-SEED-%s-%03d', $prescribedAt->format('Ymd'), $counter++),
                     'status' => $statuses[($monthIndex + $i) % count($statuses)],
-                    'notes' => fake()->sentence(),
+                    'notes' => $this->faker()->sentence(),
                     'prescribed_at' => $prescribedAt,
                 ]);
 
@@ -213,12 +213,22 @@ class DatabaseSeeder extends Seeder
                         'prescription_id' => $prescription->id,
                         'medication_id' => $medication->id,
                         'quantity' => random_int(1, 3),
-                        'dosage_instructions' => fake()->sentence(8),
+                        'dosage_instructions' => $this->faker()->sentence(8),
                         'unit_price' => $medication->unit_price,
                     ]);
                 }
             }
         }
+    }
+    private function faker(): \Faker\Generator
+    {
+        static $faker = null;
+
+        if ($faker === null) {
+            $faker = \Faker\Factory::create();
+        }
+
+        return $faker;
     }
 
     private function seedSales(Collection $customers, Collection $team, Collection $medications, Collection $inventoryByMedication): void
