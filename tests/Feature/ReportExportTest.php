@@ -16,6 +16,71 @@ class ReportExportTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_export_overview_report_as_csv(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $customer = Customer::create([
+            'first_name' => 'Overview',
+            'last_name' => 'Customer',
+            'date_of_birth' => '1990-01-01',
+            'sex' => 'female',
+        ]);
+        $medication = Medication::create([
+            'sku' => 'EXP-OV-001',
+            'name' => 'Overview Med',
+            'unit_type' => 'tablet',
+            'unit_price' => 10,
+            'status' => 'active',
+        ]);
+        $sale = Sale::create([
+            'customer_id' => $customer->id,
+            'user_id' => $admin->id,
+            'sale_number' => 'SL-OV-001',
+            'subtotal' => 20,
+            'discount' => 0,
+            'tax' => 0,
+            'total' => 20,
+            'payment_method' => 'cash',
+            'status' => 'paid',
+            'sold_at' => now(),
+        ]);
+        SaleItem::create([
+            'sale_id' => $sale->id,
+            'medication_id' => $medication->id,
+            'quantity' => 2,
+            'unit_price' => 10,
+            'line_total' => 20,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('reports.overview.export'));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $response->assertSee('Monthly Revenue (UGX)');
+        $response->assertSee('76000');
+        $response->assertSee('SL-OV-001');
+    }
+
+    public function test_admin_can_export_patients_report_as_csv(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $customer = Customer::create([
+            'first_name' => 'Patient',
+            'last_name' => 'Export',
+            'date_of_birth' => '1990-01-01',
+            'sex' => 'female',
+            'phone' => '+256700000001',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('reports.patients.export'));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $response->assertSee('Patient');
+        $response->assertSee('Export');
+        $response->assertSee('+256700000001');
+    }
+
     public function test_admin_can_export_sales_report_as_csv(): void
     {
         $admin = User::factory()->admin()->create();
@@ -59,6 +124,7 @@ class ReportExportTest extends TestCase
         $response->assertSee('Sale Number');
         $response->assertSee('SL-EXP-001');
         $response->assertSee('Cash');
+        $response->assertSee('76000');
     }
 
     public function test_admin_can_export_stock_report_as_csv(): void

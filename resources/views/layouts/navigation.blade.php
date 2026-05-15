@@ -31,7 +31,7 @@
                         </x-nav-link>
                     @endcan
                     @can('view-reports')
-                        <x-nav-link :href="route('reports.sales')" :active="request()->routeIs('reports.*')">
+                        <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
                             {{ __('Reports') }}
                         </x-nav-link>
                     @endcan
@@ -133,7 +133,7 @@
                 <div>
                     <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Admin</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <a href="{{ route('reports.sales') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Reports</a>
+                        <a href="{{ route('reports.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Reports</a>
                         <a href="{{ route('stock-movements.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('stock-movements.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Stock</a>
                         <a href="{{ route('users.index') }}" @click="open = false" class="rounded-lg px-3 py-2 text-sm font-medium col-span-2 {{ request()->routeIs('users.*') ? 'bg-accent-100 text-accent-800' : 'bg-gray-50 text-gray-700' }}">Users</a>
                     </div>

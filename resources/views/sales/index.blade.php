@@ -48,7 +48,7 @@
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $sale->sale_number }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-800">{{ $sale->customer?->first_name }} {{ $sale->customer?->last_name }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $sale->total, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$sale->total" /></td>
                                 <td class="px-4 py-3 text-sm"><x-status-badge :status="$sale->status" /></td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $sale->sold_at?->format('Y-m-d H:i') }}</td>
                                 <td class="px-4 py-3 text-sm">

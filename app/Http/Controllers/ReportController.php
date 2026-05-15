@@ -2,20 +2,260 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Inventory;
+use App\Models\Prescription;
 use App\Models\Sale;
 use App\Models\StockMovement;
 use Illuminate\Http\Response;
-use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ReportController extends Controller
 {
+    private const UGX_EXCHANGE_RATE = 3800;
+
+    public function index(): View
+    {
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
+
+        $salesTrend = $this->salesTrendSeries();
+        $patientGrowth = $this->customerGrowthSeries();
+        $medicationPerformance = $this->medicationPerformanceSeries($analyticsStart, $analyticsEnd, 6);
+        $lowStockItems = $this->lowStockInventory();
+
+        return view('reports.index', [
+            'monthlySalesTotal' => Sale::query()->whereBetween('sold_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('total'),
+            'patientCount' => Customer::query()->count(),
+            'lowStockCount' => $lowStockItems->count(),
+            'monthlyPrescriptionCount' => Prescription::query()->whereBetween('prescribed_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),
+            'salesTrendChart' => $this->lineChart(
+                chartId: 'overview-sales-trend-chart',
+                labels: $salesTrend->pluck('label')->all(),
+                datasets: [
+                    [
+                        'label' => 'Revenue',
+                        'data' => $salesTrend->pluck('total')->map(fn ($amount) => $this->normalizeAmount($amount))->all(),
+                        'borderColor' => 'rgb(37, 99, 235)',
+                        'backgroundColor' => 'rgba(37, 99, 235, 0.18)',
+                        'fill' => true,
+                        'tension' => 0.35,
+                    ],
+                ],
+            ),
+            'stockHealthChart' => $this->doughnutChart(
+                chartId: 'overview-stock-health-chart',
+                labels: ['Healthy stock', 'Low stock'],
+                datasets: [
+                    [
+                        'label' => 'Stock health',
+                        'data' => [max(0, Inventory::query()->count() - $lowStockItems->count()), $lowStockItems->count()],
+                        'backgroundColor' => [
+                            'rgba(37, 99, 235, 0.82)',
+                            'rgba(245, 158, 11, 0.82)',
+                        ],
+                    ],
+                ],
+            ),
+            'patientGrowthChart' => $this->lineChart(
+                chartId: 'overview-patient-growth-chart',
+                labels: $patientGrowth->pluck('label')->all(),
+                datasets: [
+                    [
+                        'label' => 'New patients',
+                        'data' => $patientGrowth->pluck('count')->all(),
+                        'borderColor' => 'rgb(16, 185, 129)',
+                        'backgroundColor' => 'rgba(16, 185, 129, 0.16)',
+                        'fill' => true,
+                        'tension' => 0.35,
+                    ],
+                ],
+            ),
+            'medicationPerformanceChart' => $this->barChart(
+                chartId: 'overview-medication-performance-chart',
+                labels: $medicationPerformance->pluck('name')->all(),
+                datasets: [
+                    [
+                        'label' => 'Revenue',
+                        'data' => $medicationPerformance->pluck('revenue')->map(fn ($amount) => $this->normalizeAmount($amount))->all(),
+                        'backgroundColor' => 'rgba(99, 102, 241, 0.82)',
+                    ],
+                ],
+            ),
+            'recentSales' => Sale::query()->with(['customer:id,first_name,last_name', 'user:id,name'])->orderByDesc('sold_at')->orderByDesc('id')->limit(5)->get(),
+            'recentPatients' => Customer::query()->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get(),
+        ]);
+    }
+
+    public function patients(): View
+    {
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
+
+        $patientGrowth = $this->customerGrowthSeries();
+        $sexDistribution = Customer::query()
+            ->selectRaw('sex, COUNT(*) as total')
+            ->groupBy('sex')
+            ->orderBy('sex')
+            ->get();
+
+        $prescriptionActivity = collect(range(0, 5))->map(function (int $offset) use ($analyticsStart): array {
+            $month = $analyticsStart->copy()->addMonthsNoOverflow($offset);
+
+            return [
+                'label' => $month->format('M Y'),
+                'count' => Prescription::query()->whereBetween('prescribed_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])->count(),
+            ];
+        });
+
+        $repeatPatients = Customer::query()
+            ->withCount(['prescriptions', 'sales'])
+            ->get()
+            ->filter(fn (Customer $customer): bool => $customer->prescriptions_count > 1 || $customer->sales_count > 1)
+            ->sortByDesc('sales_count')
+            ->sortByDesc('prescriptions_count')
+            ->take(8)
+            ->values();
+
+        return view('reports.patients', [
+            'patientCount' => Customer::query()->count(),
+            'newPatientsThisMonth' => Customer::query()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),
+            'prescriptionsThisMonth' => Prescription::query()->whereBetween('prescribed_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),
+            'repeatPatientsCount' => $repeatPatients->count(),
+            'patientGrowthChart' => $this->lineChart(
+                chartId: 'patients-growth-chart',
+                labels: $patientGrowth->pluck('label')->all(),
+                datasets: [
+                    [
+                        'label' => 'New patients',
+                        'data' => $patientGrowth->pluck('count')->all(),
+                        'borderColor' => 'rgb(37, 99, 235)',
+                        'backgroundColor' => 'rgba(37, 99, 235, 0.18)',
+                        'fill' => true,
+                        'tension' => 0.35,
+                    ],
+                ],
+            ),
+            'patientSexChart' => $this->doughnutChart(
+                chartId: 'patient-sex-chart',
+                labels: $sexDistribution->pluck('sex')->map(fn (string $sex) => Str::headline($sex))->all(),
+                datasets: [
+                    [
+                        'label' => 'Patients',
+                        'data' => $sexDistribution->pluck('total')->all(),
+                        'backgroundColor' => [
+                            'rgba(99, 102, 241, 0.82)',
+                            'rgba(16, 185, 129, 0.82)',
+                            'rgba(245, 158, 11, 0.82)',
+                        ],
+                    ],
+                ],
+            ),
+            'prescriptionActivityChart' => $this->barChart(
+                chartId: 'prescription-activity-chart',
+                labels: $prescriptionActivity->pluck('label')->all(),
+                datasets: [
+                    [
+                        'label' => 'Prescriptions',
+                        'data' => $prescriptionActivity->pluck('count')->all(),
+                        'backgroundColor' => 'rgba(245, 158, 11, 0.82)',
+                    ],
+                ],
+            ),
+            'repeatPatients' => $repeatPatients,
+        ]);
+    }
+
+    public function exportOverview(): Response
+    {
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
+
+        $salesTrend = $this->salesTrendSeries();
+        $patientGrowth = $this->customerGrowthSeries();
+        $medicationPerformance = $this->medicationPerformanceSeries($analyticsStart, $analyticsEnd, 6);
+        $lowStockItems = $this->lowStockInventory();
+        $recentSales = Sale::query()
+            ->with(['customer:id,first_name,last_name', 'user:id,name'])
+            ->orderByDesc('sold_at')
+            ->orderByDesc('id')
+            ->limit(5)
+            ->get();
+        $recentPatients = Customer::query()
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(5)
+            ->get();
+
+        $rows = [
+            ['Section', 'Label', 'Value'],
+            ['Summary', 'Monthly Revenue (UGX)', $this->normalizeAmount(Sale::query()->whereBetween('sold_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('total'))],
+            ['Summary', 'Active Patients', Customer::query()->count()],
+            ['Summary', 'Low Stock Medications', $lowStockItems->count()],
+            ['Summary', 'Prescriptions This Month', Prescription::query()->whereBetween('prescribed_at', [now()->startOfMonth(), now()->endOfMonth()])->count()],
+        ];
+
+        foreach ($salesTrend as $row) {
+            $rows[] = ['Sales Trend', $row['label'], $this->normalizeAmount($row['total'])];
+        }
+
+        foreach ($patientGrowth as $row) {
+            $rows[] = ['Patient Growth', $row['label'], $row['count']];
+        }
+
+        foreach ($medicationPerformance as $row) {
+            $rows[] = ['Medication Performance', $row->name.' ('.$row->sku.')', $this->normalizeAmount($row->revenue)];
+        }
+
+        foreach ($recentSales as $sale) {
+            $rows[] = [
+                'Recent Sales',
+                $sale->sale_number,
+                $this->normalizeAmount($sale->total),
+            ];
+        }
+
+        foreach ($recentPatients as $patient) {
+            $rows[] = [
+                'Recent Patients',
+                trim($patient->first_name.' '.$patient->last_name),
+                $patient->phone ?: '-',
+            ];
+        }
+
+        return $this->csvDownload('reports-overview.csv', $rows[0], array_slice($rows, 1));
+    }
+
+    public function exportPatients(): Response
+    {
+        $patients = Customer::query()
+            ->withCount(['prescriptions', 'sales'])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->get();
+
+        return $this->csvDownload('patients-report.csv', [
+            'Patient',
+            'Phone',
+            'Sex',
+            'Prescriptions',
+            'Sales',
+            'Joined',
+        ], $patients->map(function (Customer $customer): array {
+            return [
+                trim($customer->first_name.' '.$customer->last_name),
+                $customer->phone ?: '-',
+                Str::headline((string) $customer->sex),
+                (string) $customer->prescriptions_count,
+                (string) $customer->sales_count,
+                $customer->created_at?->format('Y-m-d H:i') ?? '-',
+            ];
+        })->all());
+    }
+
     public function sales(): View
     {
-        $analyticsStart = now()->subMonthsNoOverflow(5)->startOfMonth();
-        $analyticsEnd = now()->endOfMonth();
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
 
         $sales = Sale::query()
             ->with(['customer:id,first_name,last_name', 'user:id,name'])
@@ -25,57 +265,20 @@ class ReportController extends Controller
             ->limit(10)
             ->get();
 
-        $salesForAnalytics = Sale::query()
-            ->with(['customer:id,first_name,last_name', 'user:id,name'])
+        $monthlySales = $this->salesTrendSeries();
+
+        $paymentMethodSummary = Sale::query()
             ->whereBetween('sold_at', [$analyticsStart, $analyticsEnd])
-            ->orderBy('sold_at')
-            ->orderBy('id')
-            ->get();
-
-        $monthlySales = collect(range(0, 5))->map(function (int $offset) use ($analyticsStart, $salesForAnalytics): array {
-            $month = $analyticsStart->copy()->addMonthsNoOverflow($offset);
-            $monthKey = $month->format('Y-m');
-
-            $monthSales = $salesForAnalytics->filter(function (Sale $sale) use ($monthKey): bool {
-                return $sale->sold_at?->format('Y-m') === $monthKey;
-            });
-
-            return [
-                'label' => $month->format('M Y'),
-                'total' => (float) $monthSales->sum('total'),
-                'count' => $monthSales->count(),
-            ];
-        });
-
-        $paymentMethodSummary = $salesForAnalytics
+            ->selectRaw('payment_method, SUM(total) as total')
             ->groupBy('payment_method')
-            ->map(fn ($group): array => [
-                'method' => Str::headline($group->first()->payment_method),
-                'total' => (float) $group->sum('total'),
-                'count' => $group->count(),
-            ])
-            ->sortByDesc('total')
-            ->values();
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($row): array => [
+                'method' => Str::headline($row->payment_method),
+                'total' => (float) $row->total,
+            ]);
 
-        $salesByUser = $salesForAnalytics
-            ->groupBy('user_id')
-            ->map(fn ($group): array => [
-                'name' => $group->first()->user?->name ?? 'Unknown',
-                'total' => (float) $group->sum('total'),
-                'count' => $group->count(),
-            ])
-            ->sortByDesc('total')
-            ->values();
-
-        $topMedications = DB::table('sale_items')
-            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-            ->join('medications', 'sale_items.medication_id', '=', 'medications.id')
-            ->whereBetween('sales.sold_at', [now()->startOfMonth(), now()->endOfMonth()])
-            ->selectRaw('medications.name, medications.sku, SUM(sale_items.quantity) as quantity_sold, SUM(sale_items.line_total) as revenue')
-            ->groupBy('medications.id', 'medications.name', 'medications.sku')
-            ->orderByDesc('quantity_sold')
-            ->limit(5)
-            ->get();
+        $topMedications = $this->medicationPerformanceSeries($analyticsStart, $analyticsEnd, 6);
 
         return view('reports.sales', [
             'sales' => $sales,
@@ -89,7 +292,7 @@ class ReportController extends Controller
                 datasets: [
                     [
                         'label' => 'Sales total',
-                        'data' => $monthlySales->pluck('total')->all(),
+                        'data' => $monthlySales->pluck('total')->map(fn ($amount) => $this->normalizeAmount($amount))->all(),
                         'borderColor' => 'rgb(37, 99, 235)',
                         'backgroundColor' => 'rgba(37, 99, 235, 0.18)',
                         'fill' => true,
@@ -103,7 +306,7 @@ class ReportController extends Controller
                 datasets: [
                     [
                         'label' => 'Sales by payment method',
-                        'data' => $paymentMethodSummary->pluck('total')->all(),
+                        'data' => $paymentMethodSummary->pluck('total')->map(fn ($amount) => $this->normalizeAmount($amount))->all(),
                         'backgroundColor' => [
                             'rgba(37, 99, 235, 0.82)',
                             'rgba(16, 185, 129, 0.82)',
@@ -113,13 +316,13 @@ class ReportController extends Controller
                     ],
                 ],
             ),
-            'salesByUserChart' => $this->barChart(
-                chartId: 'sales-by-user-chart',
-                labels: $salesByUser->pluck('name')->all(),
+            'medicationPerformanceChart' => $this->barChart(
+                chartId: 'medication-performance-chart',
+                labels: $topMedications->pluck('name')->all(),
                 datasets: [
                     [
-                        'label' => 'Sales total',
-                        'data' => $salesByUser->pluck('total')->all(),
+                        'label' => 'Revenue',
+                        'data' => $topMedications->pluck('revenue')->map(fn ($amount) => $this->normalizeAmount($amount))->all(),
                         'backgroundColor' => 'rgba(99, 102, 241, 0.82)',
                     ],
                 ],
@@ -129,9 +332,11 @@ class ReportController extends Controller
 
     public function exportSales(): Response
     {
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
+
         $sales = Sale::query()
             ->with(['customer:id,first_name,last_name', 'user:id,name'])
-            ->whereBetween('sold_at', [now()->subMonthsNoOverflow(5)->startOfMonth(), now()->endOfMonth()])
+            ->whereBetween('sold_at', [$analyticsStart, $analyticsEnd])
             ->orderByDesc('sold_at')
             ->orderByDesc('id')
             ->get();
@@ -143,10 +348,10 @@ class ReportController extends Controller
             'Cashier',
             'Payment Method',
             'Status',
-            'Subtotal',
-            'Discount',
-            'Tax',
-            'Total',
+            'Subtotal (UGX)',
+            'Discount (UGX)',
+            'Tax (UGX)',
+            'Total (UGX)',
         ], $sales->map(function (Sale $sale): array {
             return [
                 $sale->sale_number,
@@ -155,10 +360,10 @@ class ReportController extends Controller
                 $sale->user?->name ?? 'Unknown',
                 Str::headline($sale->payment_method),
                 Str::headline($sale->status),
-                number_format((float) $sale->subtotal, 2, '.', ''),
-                number_format((float) $sale->discount, 2, '.', ''),
-                number_format((float) $sale->tax, 2, '.', ''),
-                number_format((float) $sale->total, 2, '.', ''),
+                (string) $this->normalizeAmount($sale->subtotal),
+                (string) $this->normalizeAmount($sale->discount),
+                (string) $this->normalizeAmount($sale->tax),
+                (string) $this->normalizeAmount($sale->total),
             ];
         })->all());
     }
@@ -181,10 +386,7 @@ class ReportController extends Controller
             });
 
         $lowStockItems = $inventoryRows->filter(fn (array $row) => $row['is_low_stock'])->values();
-
-        $currentMonthStart = now()->startOfMonth();
-        $analyticsStart = now()->subMonthsNoOverflow(5)->startOfMonth();
-        $analyticsEnd = now()->endOfMonth();
+        [$analyticsStart, $analyticsEnd] = $this->analyticsWindow();
 
         $stockMovements = StockMovement::query()
             ->select('stock_movements.*')
@@ -209,13 +411,8 @@ class ReportController extends Controller
             ];
         });
 
-        $stockHealth = [
-            'Healthy stock' => $inventoryRows->count() - $lowStockItems->count(),
-            'Low stock' => $lowStockItems->count(),
-        ];
-
         $inventoryLevels = $inventoryRows
-            ->sortBy('quantity_on_hand')
+            ->sortBy('inventory.quantity_on_hand')
             ->take(8)
             ->values()
             ->map(function (array $row): array {
@@ -231,7 +428,7 @@ class ReportController extends Controller
             'lowStockItems' => $lowStockItems,
             'movementSummary' => StockMovement::query()
                 ->selectRaw('movement_type, SUM(quantity) as quantity_total')
-                ->whereBetween('created_at', [$currentMonthStart, now()->endOfMonth()])
+                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
                 ->groupBy('movement_type')
                 ->orderBy('movement_type')
                 ->get(),
@@ -254,11 +451,11 @@ class ReportController extends Controller
             ),
             'stockHealthChart' => $this->doughnutChart(
                 chartId: 'stock-health-chart',
-                labels: array_keys($stockHealth),
+                labels: ['Healthy stock', 'Low stock'],
                 datasets: [
                     [
                         'label' => 'Inventory status',
-                        'data' => array_values($stockHealth),
+                        'data' => [max(0, $inventoryRows->count() - $lowStockItems->count()), $lowStockItems->count()],
                         'backgroundColor' => [
                             'rgba(37, 99, 235, 0.82)',
                             'rgba(245, 158, 11, 0.82)',
@@ -309,6 +506,75 @@ class ReportController extends Controller
                 $reorderLevel !== null && $quantityOnHand <= $reorderLevel ? 'Low stock' : 'Healthy',
             ];
         })->all());
+    }
+
+    private function analyticsWindow(): array
+    {
+        return [now()->subMonthsNoOverflow(5)->startOfMonth(), now()->endOfMonth()];
+    }
+
+    private function normalizeAmount(float|int|string $amount): int
+    {
+        $exchangeRate = (float) config('currency.usd_to_ugx_rate', self::UGX_EXCHANGE_RATE);
+
+        return (int) round(((float) $amount) * $exchangeRate, 0);
+    }
+
+    private function reportMonths(): Collection
+    {
+        [$analyticsStart] = $this->analyticsWindow();
+
+        return collect(range(0, 5))->map(fn (int $offset) => $analyticsStart->copy()->addMonthsNoOverflow($offset));
+    }
+
+    private function salesTrendSeries(): Collection
+    {
+        return $this->reportMonths()->map(function ($month) {
+            $monthSales = Sale::query()
+                ->whereBetween('sold_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->get();
+
+            return [
+                'label' => $month->format('M Y'),
+                'total' => (float) $monthSales->sum('total'),
+                'count' => $monthSales->count(),
+            ];
+        });
+    }
+
+    private function customerGrowthSeries(): Collection
+    {
+        return $this->reportMonths()->map(function ($month) {
+            return [
+                'label' => $month->format('M Y'),
+                'count' => Customer::query()->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])->count(),
+            ];
+        });
+    }
+
+    private function medicationPerformanceSeries($analyticsStart, $analyticsEnd, int $limit): Collection
+    {
+        return DB::table('sale_items')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->join('medications', 'sale_items.medication_id', '=', 'medications.id')
+            ->whereBetween('sales.sold_at', [$analyticsStart, $analyticsEnd])
+            ->selectRaw('medications.name, medications.sku, SUM(sale_items.quantity) as quantity_sold, SUM(sale_items.line_total) as revenue')
+            ->groupBy('medications.id', 'medications.name', 'medications.sku')
+            ->orderByDesc('revenue')
+            ->limit($limit)
+            ->get();
+    }
+
+    private function lowStockInventory(): Collection
+    {
+        return Inventory::query()
+            ->select('inventory.*')
+            ->with(['medication:id,name,sku,reorder_level'])
+            ->join('medications', 'inventory.medication_id', '=', 'medications.id')
+            ->whereNotNull('medications.reorder_level')
+            ->whereColumn('inventory.quantity_on_hand', '<=', 'medications.reorder_level')
+            ->orderByRaw('(medications.reorder_level - inventory.quantity_on_hand) DESC')
+            ->get();
     }
 
     private function barChart(string $chartId, array $labels, array $datasets): array

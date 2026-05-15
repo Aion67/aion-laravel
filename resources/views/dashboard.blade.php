@@ -11,7 +11,7 @@
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 @foreach ($cards as $card)
                     <div class="min-w-0">
-                        <x-stat-card :label="$card['label']" :value="$card['value']" />
+                        <x-stat-card :label="$card['label']" :value="$card['value']" :money="($card['money'] ?? false)" />
                     </div>
                 @endforeach
             </div>
@@ -25,7 +25,7 @@
                                 <p class="text-sm text-gray-500">Items that need restocking soon</p>
                             </div>
                             @if ($canViewReports)
-                                <a href="{{ route('reports.stock') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Stock report</a>
+                                <a href="{{ route('reports.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Reports overview</a>
                             @endif
                         </div>
                         <div class="overflow-x-auto">
@@ -80,7 +80,7 @@
                                     @forelse ($recentSales as $sale)
                                         <tr>
                                             <td class="px-4 py-3 text-sm text-gray-800">{{ $sale->sale_number }}</td>
-                                            <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $sale->total, 2) }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$sale->total" /></td>
                                             <td class="px-4 py-3 text-sm"><x-status-badge :status="$sale->status" /></td>
                                         </tr>
                                     @empty

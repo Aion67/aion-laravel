@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         if ($canManageSales) {
             $cards[] = ['label' => 'Low Stock Alerts', 'value' => $this->lowStockCount()];
-            $cards[] = ['label' => "Today's Sales", 'value' => number_format((float) Sale::query()->whereDate('sold_at', $today)->sum('total'), 2)];
+            $cards[] = ['label' => "Today's Sales", 'value' => Sale::query()->whereDate('sold_at', $today)->sum('total'), 'money' => true];
         }
 
         return view('dashboard', [

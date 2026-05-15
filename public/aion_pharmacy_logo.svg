@@ -1,20 +1,102 @@
-<svg width="100%" viewBox="0 0 680 320" role="img" style="" xmlns="http://www.w3.org/2000/svg">
-  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Aion Pharmacy logo</title>
-  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">A modern minimal pharmacy logo with a green cross in a circle, wordmark "aion" and tagline "pharmacy" in dark text for white backgrounds</desc>
-
-  
-
-  <g transform="translate(190, 60)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
-    <circle cx="50" cy="50" r="46" style="fill:none;stroke:rgb(22, 163, 74);color:rgb(251, 251, 254);stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="36" y="18" width="28" height="64" rx="4" style="fill:rgb(22, 163, 74);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="18" y="36" width="64" height="28" rx="4" style="fill:rgb(22, 163, 74);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-    <rect x="40" y="40" width="20" height="20" rx="3" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100%"
+   viewBox="0 0 680 320"
+   role="img"
+   style=""
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="aion_pharmacy_logo.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.72647062"
+     inkscape:cx="311.0931"
+     inkscape:cy="296.63966"
+     inkscape:window-width="1362"
+     inkscape:window-height="764"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4" />
+  <title
+     style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"
+     id="title1">Aion Pharmacy logo</title>
+  <desc
+     style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"
+     id="desc1">A modern minimal pharmacy logo with a green cross in a circle, wordmark &quot;aion&quot; and tagline &quot;pharmacy&quot; in dark text for white backgrounds</desc>
+  <g
+     id="g4"
+     transform="matrix(0.94295093,0,0,1,40.248199,16.546871)">
+    <g
+       transform="matrix(1.5245484,0,0,1.5558994,266.52971,70.408584)"
+       style="color:#fbfbfe;font-weight:400;font-size:16px;font-family:'Anthropic Sans', '-apple-system', BlinkMacSystemFont, 'Segoe UI', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#000000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter"
+       id="g3">
+      <circle
+         cx="50"
+         cy="50"
+         r="46"
+         style="color:#fbfbfe;font-weight:400;font-size:16px;font-family:'Anthropic Sans', '-apple-system', BlinkMacSystemFont, 'Segoe UI', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:none;stroke:#16a34a;stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter"
+         id="circle1" />
+      <rect
+         x="36"
+         y="18"
+         width="28"
+         height="64"
+         rx="4"
+         style="color:#fbfbfe;font-weight:400;font-size:16px;font-family:'Anthropic Sans', '-apple-system', BlinkMacSystemFont, 'Segoe UI', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#16a34a;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter"
+         id="rect1" />
+      <rect
+         x="18"
+         y="36"
+         width="64"
+         height="28"
+         rx="4"
+         style="color:#fbfbfe;font-weight:400;font-size:16px;font-family:'Anthropic Sans', '-apple-system', BlinkMacSystemFont, 'Segoe UI', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#16a34a;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter"
+         id="rect2" />
+      <rect
+         x="40"
+         y="40"
+         width="20"
+         height="20"
+         rx="3"
+         style="color:#fbfbfe;font-weight:400;font-size:16px;font-family:'Anthropic Sans', '-apple-system', BlinkMacSystemFont, 'Segoe UI', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#ffffff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter"
+         id="rect3" />
+    </g>
+    <text
+       x="53.552616"
+       y="213.28555"
+       font-size="52"
+       style="color:#fbfbfe;font-weight:300;font-size:138.039px;font-family:'-apple-system', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#111827;stroke:none;stroke-width:2.65459px;stroke-linecap:butt;stroke-linejoin:miter"
+       id="text3"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:198.21px;font-family:'TeX Gyre Termes Math';-inkscape-font-specification:'TeX Gyre Termes Math, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.65459px"
+         id="tspan4">AI</tspan></text>
+    <text
+       x="417.638"
+       y="212.12926"
+       font-size="52"
+       style="color:#fbfbfe;font-weight:300;font-size:138.039px;font-family:'-apple-system', sans-serif;dominant-baseline:auto;text-anchor:start;fill:#111827;stroke:none;stroke-width:2.65459px;stroke-linecap:butt;stroke-linejoin:miter"
+       id="text3-0"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:198.21px;font-family:'TeX Gyre Termes Math';-inkscape-font-specification:'TeX Gyre Termes Math, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.65459px"
+         id="tspan4-2">N</tspan></text>
   </g>
-
-  <text x="270" y="126" font-size="52" style="fill:rgb(17, 24, 39);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:-apple-system, sans-serif;font-size:52px;font-weight:300;text-anchor:start;dominant-baseline:auto">aion</text>
-
-  <line x1="270" y1="145" x2="490" y2="145" stroke-width="1" style="fill:rgb(0, 0, 0);stroke:rgb(209, 213, 219);color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
-
-  <text x="272" y="168" font-size="12" style="fill:rgb(22, 163, 74);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:-apple-system, sans-serif;font-size:12px;font-weight:500;text-anchor:start;dominant-baseline:auto">PHARMACY</text>
-
+  <text
+     x="272"
+     y="168"
+     font-size="12"
+     style="color:#fbfbfe;font-weight:500;font-size:12px;font-family:'-apple-system', sans-serif;dominant-baseline:auto;text-anchor:start;opacity:1;fill:#16a34a;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter"
+     id="text4" />
 </svg>

@@ -53,7 +53,7 @@
                                     <div>{{ $medication->name }}</div>
                                     <div class="text-xs text-gray-500">{{ $medication->strength ?: 'No strength' }} • {{ $medication->unit_type }}</div>
                                 </td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $medication->unit_price, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$medication->unit_price" /></td>
                                 <td class="px-4 py-3 text-sm">
                                     <x-status-badge :status="$medication->status" />
                                 </td>

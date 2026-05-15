@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->seedPrescriptions($customers, $team, $medications);
         $this->seedSales($customers, $team, $medications, $inventoryByMedication);
         $this->seedManualStockMovements($team, $medications, $inventoryByMedication);
+        $this->seedCriticalLowStock($team, $medications, $inventoryByMedication);
     }
 
     private function resetPharmacyData(): void
@@ -142,15 +144,16 @@ class DatabaseSeeder extends Seeder
         return collect($profiles)->map(function (array $profile) use ($medicalNotes, $allergyNotes): Customer {
             $dateOfBirth = now()->subYears(random_int(18, 68))->subDays(random_int(0, 300));
             $email = strtolower($profile['first_name'].'.'.$profile['last_name'].'@example.com');
+            $createdAt = now()->subMonthsNoOverflow(random_int(0, 5))->subDays(random_int(0, 20))->setTime(random_int(8, 17), random_int(0, 59));
 
-            return Customer::updateOrCreate(
+            $customer = Customer::updateOrCreate(
                 ['email' => $email],
                 [
                     'first_name' => $profile['first_name'],
                     'last_name' => $profile['last_name'],
                     'date_of_birth' => $dateOfBirth->toDateString(),
                     'sex' => $profile['sex'],
-                    'phone' => '+233'.str_pad((string) random_int(200000000, 999999999), 9, '0', STR_PAD_LEFT),
+                    'phone' => '+256'.str_pad((string) random_int(700000000, 799999999), 9, '0', STR_PAD_LEFT),
                     'email' => $email,
                     'address' => fake()->streetAddress().', '.fake()->city(),
                     'medical_history' => collect($medicalNotes)->random(random_int(1, 2))->implode(', '),
@@ -158,6 +161,13 @@ class DatabaseSeeder extends Seeder
                     'conditions' => collect($medicalNotes)->random(random_int(1, 2))->implode(', '),
                 ]
             );
+
+            DB::table('customers')->where('id', $customer->id)->update([
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
+            ]);
+
+            return $customer;
         })->values();
     }
 
@@ -316,6 +326,26 @@ class DatabaseSeeder extends Seeder
                 'reference_id' => null,
                 'notes' => 'Manual balancing stock adjustment',
                 'created_at' => $adjustmentDate,
+            ]);
+        }
+    }
+
+    private function seedCriticalLowStock(Collection $team, Collection $medications, Collection $inventoryByMedication): void
+    {
+        foreach ($medications->whereIn('sku', ['MED-002', 'MED-003', 'MED-007', 'MED-010']) as $medication) {
+            $inventory = $inventoryByMedication->get($medication->id);
+            $inventory->quantity_on_hand = random_int(0, max(1, (int) floor(((int) $medication->reorder_level ?? 10) / 3)));
+            $inventory->save();
+
+            StockMovement::create([
+                'medication_id' => $medication->id,
+                'user_id' => $team->random()->id,
+                'movement_type' => 'out',
+                'quantity' => random_int(1, 3),
+                'reference_type' => 'manual',
+                'reference_id' => null,
+                'notes' => 'Simulated low-stock condition for reporting and alerts',
+                'created_at' => now()->subDays(random_int(1, 10)),
             ]);
         }
     }

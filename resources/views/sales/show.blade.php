@@ -37,8 +37,8 @@
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-800">{{ $item->medication?->name }} ({{ $item->medication?->sku }})</td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $item->quantity }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $item->unit_price, 2) }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $item->line_total, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$item->unit_price" /></td>
+                                <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$item->line_total" /></td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -47,10 +47,10 @@
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <p class="text-gray-600">Subtotal: <span class="font-medium text-gray-800">{{ number_format((float) $sale->subtotal, 2) }}</span></p>
-                    <p class="text-gray-600">Discount: <span class="font-medium text-gray-800">{{ number_format((float) $sale->discount, 2) }}</span></p>
-                    <p class="text-gray-600">Tax: <span class="font-medium text-gray-800">{{ number_format((float) $sale->tax, 2) }}</span></p>
-                    <p class="text-gray-600">Total: <span class="font-medium text-gray-800">{{ number_format((float) $sale->total, 2) }}</span></p>
+                    <p class="text-gray-600">Subtotal: <span class="font-medium text-gray-800"><x-money :amount="$sale->subtotal" /></span></p>
+                    <p class="text-gray-600">Discount: <span class="font-medium text-gray-800"><x-money :amount="$sale->discount" /></span></p>
+                    <p class="text-gray-600">Tax: <span class="font-medium text-gray-800"><x-money :amount="$sale->tax" /></span></p>
+                    <p class="text-gray-600">Total: <span class="font-medium text-gray-800"><x-money :amount="$sale->total" /></span></p>
                     <p class="text-gray-600">Payment Method: <span class="font-medium text-gray-800">{{ ucfirst($sale->payment_method) }}</span></p>
                     <p class="text-gray-600">Sold At: <span class="font-medium text-gray-800">{{ $sale->sold_at?->format('Y-m-d H:i') }}</span></p>
                 </div>

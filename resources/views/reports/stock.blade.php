@@ -5,6 +5,12 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <x-report.tabs active="stock" />
+
+            <div class="flex justify-end">
+                <x-report.export-link :href="route('reports.stock.export')" label="Export stock CSV" />
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <x-stat-card label="Tracked Medications" :value="$inventoryRows->count()" />
                 <x-stat-card label="Low Stock Items" :value="$lowStockItems->count()" />
@@ -12,39 +18,13 @@
                 <x-stat-card label="Stock Out This Month" :value="number_format((float) ($movementSummary->firstWhere('movement_type', 'out')?->quantity_total ?? 0), 0)" />
             </div>
 
-            <div class="flex flex-wrap items-center justify-end gap-3">
-                <x-report.export-link :href="route('reports.stock.export')" label="Export stock CSV" />
-                <a href="{{ route('reports.sales') }}">
-                    <x-secondary-button type="button">Sales Report</x-secondary-button>
-                </a>
-                <a href="{{ route('dashboard') }}">
-                    <x-secondary-button type="button">Back to Dashboard</x-secondary-button>
-                </a>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <x-report.chart-card title="Movement trend" subtitle="Stock in and out across the last six months" chart-id="movement-trend-chart" :chart-config="$movementTrendChart" />
+                <x-report.chart-card title="Inventory health" subtitle="Healthy versus low-stock items" chart-id="stock-health-chart" :chart-config="$stockHealthChart" />
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <x-report.chart-card
-                    title="Movement trend"
-                    subtitle="Stock in and out across the last six months"
-                    chart-id="movement-trend-chart"
-                    :chart-config="$movementTrendChart"
-                />
-
-                <x-report.chart-card
-                    title="Inventory health"
-                    subtitle="Healthy versus low-stock items"
-                    chart-id="stock-health-chart"
-                    :chart-config="$stockHealthChart"
-                />
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <x-report.chart-card
-                    title="Lowest stock items"
-                    subtitle="Fastest way to spot restock priorities"
-                    chart-id="inventory-levels-chart"
-                    :chart-config="$inventoryLevelsChart"
-                />
+                <x-report.chart-card title="Lowest stock items" subtitle="Fastest way to spot restock priorities" chart-id="inventory-levels-chart" :chart-config="$inventoryLevelsChart" />
 
                 <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
                     <div class="p-6 border-b border-gray-100">

@@ -103,7 +103,7 @@ class ReportingDashboardTest extends TestCase
             $response->assertSee('Customers');
             $response->assertSee('Low Stock Alerts');
             $response->assertSee('1');
-            $response->assertSee('120.00');
+            $response->assertSee('UGX 456,000');
             $response->assertSee('Low Stock Med');
             $response->assertSee('SL-REPORT-001');
             $response->assertSee('RX-REPORT-001');
@@ -172,7 +172,7 @@ class ReportingDashboardTest extends TestCase
                 ->assertOk()
                 ->assertSee('Sales Report')
                 ->assertSee('Report Med')
-                ->assertSee('40.00');
+                ->assertSee('UGX 152,000');
 
             $this->actingAs($staff)->get(route('reports.stock'))
                 ->assertOk()

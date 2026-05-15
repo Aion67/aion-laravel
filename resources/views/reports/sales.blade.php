@@ -1,50 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Sales Report" subtitle="Monthly trends, top medications, and recent sales" />
+        <x-page-header title="Sales Report" subtitle="Monthly trends, medication performance, and recent sales" />
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <x-report.tabs active="sales" />
+
+            <div class="flex justify-end">
+                <x-report.export-link :href="route('reports.sales.export')" label="Export sales CSV" />
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <x-stat-card label="Monthly Sales" :value="number_format((float) $monthlySalesTotal, 2)" />
+                <x-stat-card label="Monthly Sales" :value="$monthlySalesTotal" money />
                 <x-stat-card label="Monthly Transactions" :value="$monthlySalesCount" />
-                <x-stat-card label="Today's Sales" :value="number_format((float) $dailySalesTotal, 2)" />
+                <x-stat-card label="Today's Sales" :value="$dailySalesTotal" money />
                 <x-stat-card label="Top Seller" :value="$topMedications->first()->name ?? 'None yet'" />
             </div>
 
-            <div class="flex flex-wrap items-center justify-end gap-3">
-                <x-report.export-link :href="route('reports.sales.export')" label="Export sales CSV" />
-                <a href="{{ route('reports.stock') }}">
-                    <x-secondary-button type="button">Stock Report</x-secondary-button>
-                </a>
-                <a href="{{ route('dashboard') }}">
-                    <x-secondary-button type="button">Back to Dashboard</x-secondary-button>
-                </a>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <x-report.chart-card title="Sales trend" subtitle="Total revenue across the last six months" chart-id="sales-trend-chart" :chart-config="$salesTrendChart" />
+                <x-report.chart-card title="Payment mix" subtitle="Revenue split by payment method" chart-id="payment-method-chart" :chart-config="$paymentMethodChart" />
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <x-report.chart-card
-                    title="Sales trend"
-                    subtitle="Total revenue across the last six months"
-                    chart-id="sales-trend-chart"
-                    :chart-config="$salesTrendChart"
-                />
-
-                <x-report.chart-card
-                    title="Payment mix"
-                    subtitle="Revenue split by payment method"
-                    chart-id="payment-method-chart"
-                    :chart-config="$paymentMethodChart"
-                />
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <x-report.chart-card
-                    title="Sales by cashier"
-                    subtitle="Revenue contribution by staff member"
-                    chart-id="sales-by-user-chart"
-                    :chart-config="$salesByUserChart"
-                />
+                <x-report.chart-card title="Medication performance" subtitle="Revenue by medication sold this month" chart-id="medication-performance-chart" :chart-config="$medicationPerformanceChart" />
 
                 <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden border border-gray-100">
                     <div class="p-6 border-b border-gray-100">
@@ -64,7 +44,7 @@
                                     <tr>
                                         <td class="px-4 py-3 text-sm text-gray-800">{{ $row->name }} ({{ $row->sku }})</td>
                                         <td class="px-4 py-3 text-sm text-gray-700">{{ $row->quantity_sold }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $row->revenue, 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$row->revenue" /></td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -93,7 +73,7 @@
                             @forelse ($sales as $sale)
                                 <tr>
                                     <td class="px-4 py-3 text-sm text-gray-800">{{ $sale->sale_number }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $sale->total, 2) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$sale->total" /></td>
                                     <td class="px-4 py-3 text-sm"><x-status-badge :status="$sale->status" /></td>
                                 </tr>
                             @empty

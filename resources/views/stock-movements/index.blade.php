@@ -1,10 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Stock Movements" subtitle="Inventory audit trail" />
+        <x-page-header title="Stock Movements" subtitle="Inventory audit trail and manual adjustments" />
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="font-semibold">This page is read-only.</p>
+                    <p class="text-sm text-amber-800">Sales and inventory adjustments create stock movements automatically. Use Inventory Adjustment to record a new manual movement.</p>
+                </div>
+                @can('adjust-inventory')
+                    <a href="{{ route('inventory.adjust.create') }}">
+                        <x-primary-button type="button">New Adjustment</x-primary-button>
+                    </a>
+                @endcan
+            </div>
+
             <div class="bg-white shadow-sm sm:rounded-lg p-4">
                 <form method="GET" action="{{ route('stock-movements.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
                     <div class="md:col-span-2">
@@ -43,8 +55,24 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $movement->created_at?->format('Y-m-d H:i') }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-800">{{ $movement->medication?->name }} ({{ $movement->medication?->sku }})</td>
                                 <td class="px-4 py-3 text-sm">
-                                    <x-status-badge :status="$movement->movement_type === 'in' ? 'active' : ($movement->movement_type === 'out' ? 'inactive' : 'pending')" />
-                                    <span class="ml-2 text-gray-600">{{ ucfirst($movement->movement_type) }}</span>
+                                    @php
+                                        $movementLabel = match ($movement->movement_type) {
+                                            'in' => 'Stock In',
+                                            'out' => 'Stock Out',
+                                            'adjustment' => 'Adjustment',
+                                            default => ucfirst($movement->movement_type),
+                                        };
+
+                                        $movementClasses = match ($movement->movement_type) {
+                                            'in' => 'bg-green-100 text-green-700',
+                                            'out' => 'bg-red-100 text-red-700',
+                                            'adjustment' => 'bg-yellow-100 text-yellow-800',
+                                            default => 'bg-gray-100 text-gray-700',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $movementClasses }}">
+                                        {{ $movementLabel }}
+                                    </span>
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $movement->quantity }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $movement->user?->name }}</td>

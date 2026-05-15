@@ -52,7 +52,7 @@
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-800">{{ $item->medication?->name }} ({{ $item->medication?->sku }})</td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $item->quantity }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ number_format((float) $item->unit_price, 2) }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700"><x-money :amount="$item->unit_price" /></td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $item->dosage_instructions ?: '-' }}</td>
                             </tr>
                         @endforeach

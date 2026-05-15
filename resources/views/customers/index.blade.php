@@ -43,7 +43,13 @@
                                 <td class="px-4 py-3 text-sm text-gray-800">{{ $customer->first_name }} {{ $customer->last_name }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ $customer->date_of_birth?->format('Y-m-d') }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">{{ ucfirst($customer->sex) }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">{{ $customer->phone ?: $customer->email ?: '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    @if ($customer->phone)
+                                        <x-phone :value="$customer->phone" />
+                                    @else
+                                        {{ $customer->email ?: '-' }}
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-sm">
                                     <div class="flex justify-end gap-2">
                                         <a href="{{ route('customers.edit', $customer) }}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
