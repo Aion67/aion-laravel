@@ -220,12 +220,31 @@ class DatabaseSeeder extends Seeder
             }
         }
     }
-    private function faker(): \Faker\Generator
+    private function faker(): object
     {
         static $faker = null;
 
         if ($faker === null) {
-            $faker = \Faker\Factory::create();
+            if (class_exists(\Faker\Factory::class)) {
+                $faker = \Faker\Factory::create();
+            } else {
+                $faker = new class {
+                    public function streetAddress(): string
+                    {
+                        return 'Main Street 1';
+                    }
+
+                    public function city(): string
+                    {
+                        return 'Kampala';
+                    }
+
+                    public function sentence(int $words = 6): string
+                    {
+                        return 'Routine follow-up required.';
+                    }
+                };
+            }
         }
 
         return $faker;
